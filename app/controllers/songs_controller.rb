@@ -48,28 +48,27 @@ class SongsController < ApplicationController
         erb :'/songs/edit'        
     end
 
-    # patch '/songs/:slug' do
-    #     # @song = Song.find_by_slug(params[:slug])
+    patch '/songs/:slug' do
+        @song = Song.find_by_slug(params[:slug])
 
-    #     # @song.name = params[:song][name]
+        @song.name = params[:song][:name]
 
-    #     # # update artist
-    #     # if Artist.where("lower(name) = ?", params[:artist_name].downcase).first
-    #     #     # an artist DOES exist
-    #     #     @song.artist = Artist.where("lower(name) = ?", params[:artist_name].downcase).first
-    #     # else
-    #     #     # an artist DOESN'T exist -> create new artist
-    #     #     @song.artist = Artist.create(name: params[:artist_name])
-    #     # end
+        # update artist
+        if Artist.where("lower(name) = ?", params[:artist_name].downcase).first
+            # an artist DOES exist
+            @song.artist = Artist.where("lower(name) = ?", params[:artist_name].downcase).first
+        else
+            # an artist DOESN'T exist -> create new artist
+            @song.artist = Artist.create(name: params[:artist_name])
+        end
 
-    #     # # update genres
-    #     # params[:genres].each do |genre_id|
-    #     #     @song.genres << Genre.find_by_id(genre_id)
-    #     # end
+        params[:genres].each do |genre_id|
+            @song.genres << Genre.find_by_id(genre_id)
+        end
 
-    #     # @song.save
-
-    #     # redirect "/song/#{@song.slug}"
-    # end
+        @song.save
+             flash[:message] = "Successfully updated song."
+        redirect "/songs/#{@song.slug}"
+    end
 
 end
